@@ -48,4 +48,22 @@ class Format(models.Model):
     def __str__(self):
         return self.get_format()
 
-    
+    def get_format(self):
+        format = f"#{self.thousand_delimiter}###"
+        decimal_delimiter = (
+            self.Delimiter.COMMA
+            if self.thousand_delimiter == self.Delimiter.DOT
+            else self.Delimiter.DOT
+        )
+        if self.cents:
+            format = f"{format}{decimal_delimiter}##"
+        symbol_or_code = (
+            self.currency.symbol 
+            if self.show == self.Show.SYMBOL
+            else self.currency.code
+        )
+        if self.display == self.Display.BEFORE:
+            format = f"{symbol_or_code} {format}"
+        else:
+            format = f"{format} {symbol_or_code}"
+        return format
